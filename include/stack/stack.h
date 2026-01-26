@@ -1,12 +1,20 @@
-#pragma once
-#include "../node/node.h"
+#ifndef STACK_H
+#define STACK_H
+#include "../node/node.cpp"
 template <typename T>
 class Stack {
     private:
-        T data;
-        Node<T>* head = NULL;
+        Node<T>* head;
+        int size;
     public:
-        void put(Node<T> node);
+        Stack();
+        void push(T data);
         T pop();
-        T getter();
+        T top();
+        int getSize();
+        void printStack();
+        bool has(T data);
+        bool isEmpty();
+        ~Stack();
 };
+#endif
