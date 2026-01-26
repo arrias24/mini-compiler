@@ -1,4 +1,6 @@
-#pragma once
+#ifndef NODE_H
+#define NODE_H
+
 template <typename T>
 class Node {
     private:
@@ -17,3 +19,4 @@ class Node {
         void setPreviousNode(Node<T>* previousNode);
         void print(bool isPrimitive);
 };
+#endif

@@ -4,7 +4,8 @@
  * @tparam T Tipo de dato almacenado en el nodo
  */
 
-#include "./node.h"
+#include "node.h"
+
 #include <iostream>
 
 /**
