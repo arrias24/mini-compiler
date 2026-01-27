@@ -9,6 +9,7 @@ template<typename T>
 ArrayList<T>::ArrayList() {
     this->head = nullptr;
     this->tail = nullptr;
+    this->current = nullptr;
     this->size = 0;
 }
 
@@ -29,6 +30,7 @@ template<typename T>
 void ArrayList<T>::addEmpty(Node<T> *node) {
     this->head = node;
     this->tail = node;
+    this->current = node;
     ++this->size;
 }
 
@@ -91,6 +93,39 @@ Node<T>* ArrayList<T>::get(int index) {
 }
 
 /**
+ * @brief Obtiene el nodo apuntado por el cursor actual.
+ * @return Puntero al nodo actual (current).
+ */
+template<typename T>
+Node<T> *ArrayList<T>::get() {
+    return this->current;
+}
+
+/**
+ * @brief Desplaza el cursor 'current' al siguiente nodo de la lista.
+ */
+template<typename T>
+void ArrayList<T>::next() {
+    if (this->current != nullptr && this->current->getNextNode() != nullptr) this->current = this->current->getNextNode();
+}
+
+/**
+ * @brief Desplaza el cursor 'current' al nodo anterior de la lista.
+ */
+template<typename T>
+void ArrayList<T>::previous() {
+    if (this->current != nullptr && this->current->getPreviousNode() != nullptr) this->current = this->current->getPreviousNode();
+}
+
+/**
+ * @brief Reinicia el cursor 'current' a la cabeza de la lista.
+ */
+template<typename T>
+void ArrayList<T>::reset() {
+    this->current = this->head;
+}
+
+/**
  * @brief Obtiene el primer nodo de la lista.
  * @return Puntero al nodo head.
  */
@@ -104,7 +139,7 @@ Node<T> *ArrayList<T>::getFirst() {
  * @return Puntero al nodo tail.
  */
 template<typename T>
-Node<T> *ArrayList<T>::getlast() {
+Node<T> *ArrayList<T>::getLast() {
     return this->get(this->size);
 }
 
@@ -115,6 +150,7 @@ template<typename T>
 void ArrayList<T>::removeEmpty() {
     this->head = nullptr;
     this->tail = nullptr;
+    this->current = nullptr;
     this->size = 0;
 }
 
@@ -129,6 +165,7 @@ void ArrayList<T>::shift() {
         this->removeEmpty();
     } else {
         this->head = this->head->getNextNode();
+        if (this->current == this->head->getPreviousNode()) this->current = this->head;
         this->head->setPreviousNode(nullptr);
         --this->size;
     }
@@ -145,6 +182,7 @@ void ArrayList<T>::pop() {
         this->removeEmpty();
     } else {
         this->tail = this->tail->getPreviousNode();
+        if (this->current == this->tail->getPreviousNode()) this->current = this->tail ;
         this->tail->setNextNode(nullptr);
         --this->size;
     }
@@ -160,6 +198,7 @@ void ArrayList<T>::removeMiddle(Node<T> *node) {
     Node<T> *tempPrevious = node->getPreviousNode();
     tempPrevious->setNextNode(tempNext);
     tempNext->setPreviousNode(tempPrevious);
+    if (this->current == node) this->current = tempNext;
     --this->size;
 }
 
@@ -182,6 +221,29 @@ Node<T>* ArrayList<T>::remove(int index) {
 }
 
 /**
+ * @brief Elimina y retorna el nodo apuntado por el cursor actual.
+ * Actualiza el cursor al siguiente nodo disponible.
+ * @return El puntero al nodo eliminado o nullptr si el cursor es nulo.
+ */
+template<typename T>
+Node<T> *ArrayList<T>::remove() {
+    if (this->current == nullptr) return nullptr;
+    Node<T>* temp = this->current;
+    if (this->current != this->head && this->current != this->tail) {
+        Node<T> *tempNext = this->current->getNextNode();
+        Node<T> *tempPrevious = this->current->getPreviousNode();
+        tempPrevious->setNextNode(tempNext);
+        tempNext->setPreviousNode(tempPrevious);
+        this->current = tempNext;
+        --this->size;
+        return temp;
+    }
+    if (this->current == this->head) this->shift();
+    else if (this->current == this->tail) this->pop();
+    return temp;
+}
+
+/**
  * @brief Elimina y retorna el primer nodo.
  * @return Puntero al nodo eliminado.
  */
@@ -195,7 +257,7 @@ Node<T> *ArrayList<T>::removeFirst() {
  * @return Puntero al nodo eliminado.
  */
 template<typename T>
-Node<T> *ArrayList<T>::removerLast() {
+Node<T> *ArrayList<T>::removeLast() {
     return this->remove(this->size);
 }
 
@@ -250,5 +312,6 @@ ArrayList<T>::~ArrayList() {
     }
     this->head = nullptr;
     this->tail = nullptr;
+    this->current = nullptr;
     this->size = 0;
 }

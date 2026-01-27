@@ -8,6 +8,7 @@ class ArrayList {
     private:
         Node<T>* head;
         Node<T>* tail;
+        Node<T>* current;
         int size;
 
         void addEmpty(Node<T>* node);
@@ -21,12 +22,17 @@ class ArrayList {
     public:
         ArrayList<T>();
         void add(T data, bool isInsertFirst);
+        Node<T>* get();
         Node<T>* get(int index);
-        Node<T>* remove(int index);
         Node<T>* getFirst();
-        Node<T>* getlast();
+        Node<T>* getLast();
+        Node<T>* remove();
+        Node<T>* remove(int index);
         Node<T>* removeFirst();
-        Node<T>* removerLast();
+        Node<T>* removeLast();
+        void next();
+        void previous();
+        void reset();
         bool has(T data);
         int getSize() const;
         void printList();

@@ -33,7 +33,6 @@ void Stack<T>::push(T data){
         this->head = node;
     }
     ++this->size;
-    return;
 };
 
 /**

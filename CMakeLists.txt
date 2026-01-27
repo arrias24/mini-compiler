@@ -15,4 +15,5 @@ add_executable(proyectos
         include/node/node.h
         include/stack/stack.h
         src/main.cpp
-        include/array_list/array_list.cpp)
+        include/array_list/array_list.cpp
+        include/stack/stack.cpp)
