@@ -10,29 +10,27 @@ class ArrayList {
         Node<T>* tail;
         Node<T>* current;
         int size;
-
-        void addEmpty(Node<T>* node);
-        void addFirst(Node<T>* node);
-        void addLast(Node<T>* node);
-        void removeEmpty();
+        void addWhenEmpty(Node<T>* node);
+        void removeWhenEmpty();
         void shift();
-        void pop();
+        void unshift();
         void removeMiddle(Node<T>* node);
 
     public:
         ArrayList<T>();
-        void add(T data, bool isInsertFirst);
+        void addFirst(T data);
+        void addLast(T data);
         Node<T>* get();
         Node<T>* get(int index);
         Node<T>* getFirst();
         Node<T>* getLast();
-        Node<T>* remove();
         Node<T>* remove(int index);
         Node<T>* removeFirst();
         Node<T>* removeLast();
-        void next();
-        void previous();
-        void reset();
+        void currentNext();
+        void currentPrevious();
+        void currentReset();
+        Node<T>* currentPeek();
         bool has(T data);
         int getSize() const;
         void printList();

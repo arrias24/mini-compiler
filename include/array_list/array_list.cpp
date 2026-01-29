@@ -27,7 +27,7 @@ bool ArrayList<T>::isEmpty() {
  * @param node Puntero al nodo que se convertirá en el único elemento.
  */
 template<typename T>
-void ArrayList<T>::addEmpty(Node<T> *node) {
+void ArrayList<T>::addWhenEmpty(Node<T> *node) {
     this->head = node;
     this->tail = node;
     this->current = node;
@@ -36,10 +36,16 @@ void ArrayList<T>::addEmpty(Node<T> *node) {
 
 /**
  * @brief Añade un nodo al principio de la lista.
- * @param node Puntero al nodo a insertar.
+ * @param data valor a ser insertado en un nodo .
  */
 template<typename T>
-void ArrayList<T>::addFirst(Node<T> *node) {
+void ArrayList<T>::addFirst(T data) {
+    Node<T> *node = new Node<T>(data);
+    if (this->isEmpty()) {
+        this->addWhenEmpty(node);
+        return;
+    }
+
     Node<T> *temp = this->head;
     this->head = node;
     node->setNextNode(temp);
@@ -51,10 +57,15 @@ void ArrayList<T>::addFirst(Node<T> *node) {
 
 /**
  * @brief Añade un nodo al final de la lista.
- * @param node Puntero al nodo a insertar.
+ * @param data valor a ser insertado en un nodo .
  */
 template<typename T>
-void ArrayList<T>::addLast(Node<T> *node) {
+void ArrayList<T>::addLast(T data) {
+    Node<T> *node = new Node<T>(data);
+    if (this->isEmpty()) {
+        this->addWhenEmpty(node);
+        return;
+    }
     Node<T> *temp = this->tail;
     this->tail = node;
     node->setPreviousNode(temp);
@@ -62,18 +73,6 @@ void ArrayList<T>::addLast(Node<T> *node) {
         temp->setNextNode(node);
     }
     ++this->size;
-}
-
-/**
- * @brief Crea un nuevo nodo con el dato proporcionado y lo inserta en la lista.
- * @param data El valor de tipo T a almacenar.
- * @param isInsertFirst Si es true, inserta al inicio; si es false, al final.
- */
-template<typename T>
-void ArrayList<T>::add(T data, bool isInsertFirst) {
-    Node<T> *node = new Node<T>(data);
-    if (this->isEmpty()) { this->addEmpty(node); return; }
-    isInsertFirst ? this->addFirst(node) : this->addLast(node);
 }
 
 /**
@@ -105,7 +104,7 @@ Node<T> *ArrayList<T>::get() {
  * @brief Desplaza el cursor 'current' al siguiente nodo de la lista.
  */
 template<typename T>
-void ArrayList<T>::next() {
+void ArrayList<T>::currentNext() {
     if (this->current != nullptr && this->current->getNextNode() != nullptr) this->current = this->current->getNextNode();
 }
 
@@ -113,7 +112,7 @@ void ArrayList<T>::next() {
  * @brief Desplaza el cursor 'current' al nodo anterior de la lista.
  */
 template<typename T>
-void ArrayList<T>::previous() {
+void ArrayList<T>::currentPrevious() {
     if (this->current != nullptr && this->current->getPreviousNode() != nullptr) this->current = this->current->getPreviousNode();
 }
 
@@ -121,8 +120,18 @@ void ArrayList<T>::previous() {
  * @brief Reinicia el cursor 'current' a la cabeza de la lista.
  */
 template<typename T>
-void ArrayList<T>::reset() {
+void ArrayList<T>::currentReset() {
     this->current = this->head;
+}
+
+/**
+ * @brief Permite observar el nodo siguiente al cursor actual sin desplazarlo.
+ * @return Puntero al siguiente nodo, o nullptr si el cursor es nulo o está en el final.
+ */
+template<typename T>
+Node<T>* ArrayList<T>::currentPeek() {
+    if (this->current == nullptr || this->current == this->tail) return nullptr;
+    return this->current->getNextNode();
 }
 
 /**
@@ -147,7 +156,7 @@ Node<T> *ArrayList<T>::getLast() {
  * @brief Limpia las referencias de la lista cuando queda vacía.
  */
 template<typename T>
-void ArrayList<T>::removeEmpty() {
+void ArrayList<T>::removeWhenEmpty() {
     this->head = nullptr;
     this->tail = nullptr;
     this->current = nullptr;
@@ -162,7 +171,7 @@ void ArrayList<T>::shift() {
     if (this->isEmpty()) return;
 
     if (this->size == 1) {
-        this->removeEmpty();
+        this->removeWhenEmpty();
     } else {
         this->head = this->head->getNextNode();
         if (this->current == this->head->getPreviousNode()) this->current = this->head;
@@ -175,11 +184,11 @@ void ArrayList<T>::shift() {
  * @brief Elimina el último elemento de la lista (similar a pop_back).
  */
 template<typename T>
-void ArrayList<T>::pop() {
+void ArrayList<T>::unshift() {
     if (this->isEmpty()) return;
 
     if (this->size == 1) {
-        this->removeEmpty();
+        this->removeWhenEmpty();
     } else {
         this->tail = this->tail->getPreviousNode();
         if (this->current == this->tail->getPreviousNode()) this->current = this->tail ;
@@ -212,34 +221,11 @@ Node<T>* ArrayList<T>::remove(int index) {
     Node<T> *temp = this->get(index);
     if (temp == nullptr) return nullptr;
     if (index == 1) this->shift();
-    else if (index == this->size) this->pop();
+    else if (index == this->size) this->unshift();
     else this->removeMiddle(temp);
 
     temp->setNextNode(nullptr);
     temp->setPreviousNode(nullptr);
-    return temp;
-}
-
-/**
- * @brief Elimina y retorna el nodo apuntado por el cursor actual.
- * Actualiza el cursor al siguiente nodo disponible.
- * @return El puntero al nodo eliminado o nullptr si el cursor es nulo.
- */
-template<typename T>
-Node<T> *ArrayList<T>::remove() {
-    if (this->current == nullptr) return nullptr;
-    Node<T>* temp = this->current;
-    if (this->current != this->head && this->current != this->tail) {
-        Node<T> *tempNext = this->current->getNextNode();
-        Node<T> *tempPrevious = this->current->getPreviousNode();
-        tempPrevious->setNextNode(tempNext);
-        tempNext->setPreviousNode(tempPrevious);
-        this->current = tempNext;
-        --this->size;
-        return temp;
-    }
-    if (this->current == this->head) this->shift();
-    else if (this->current == this->tail) this->pop();
     return temp;
 }
 
