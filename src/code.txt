@@ -1,0 +1,4 @@
+    lista.addLast(10); // Al final: [10]
+    lista.addLast(20); // Al final: [10, 20]
+    lista.addFirst(5);   // Al inicio: [5, 10, 20]
+    lista.addLast(30); // Al final: [5, 10, 20, 30]
