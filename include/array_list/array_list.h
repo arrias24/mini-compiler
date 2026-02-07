@@ -27,8 +27,8 @@ class ArrayList {
         Node<T>* remove(int index);
         Node<T>* removeFirst();
         Node<T>* removeLast();
-        void currentNext();
-        void currentPrevious();
+        bool currentNext();
+        bool currentPrevious();
         void currentReset();
         Node<T>* currentPeek();
         bool has(T data);

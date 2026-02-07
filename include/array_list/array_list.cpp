@@ -3,7 +3,8 @@
 
 /**
  * @brief Constructor por defecto de la clase ArrayList.
- * Inicializa la lista vacía con punteros nulos y tamaño cero.
+ * Inicializa una lista doblemente enlazada vacía, estableciendo los punteros
+ * de control (head, tail, current) a nullptr y el contador de tamaño a cero.
  */
 template<typename T>
 ArrayList<T>::ArrayList() {
@@ -14,8 +15,8 @@ ArrayList<T>::ArrayList() {
 }
 
 /**
- * @brief Verifica si la lista está vacía.
- * @return true si la lista no tiene elementos, false en caso contrario.
+ * @brief Verifica el estado de vacuidad de la lista.
+ * @return true si la lista no contiene elementos (head es nulo), false en caso contrario.
  */
 template<typename T>
 bool ArrayList<T>::isEmpty() {
@@ -23,8 +24,9 @@ bool ArrayList<T>::isEmpty() {
 }
 
 /**
- * @brief Caso especial para añadir un nodo cuando la lista está vacía.
- * @param node Puntero al nodo que se convertirá en el único elemento.
+ * @brief Gestiona la inserción del primer elemento en una lista vacía.
+ * @note Este es un método privado de soporte técnico para unificar la lógica de inserción.
+ * @param node Puntero al nuevo nodo que actuará simultáneamente como cabeza, cola y cursor.
  */
 template<typename T>
 void ArrayList<T>::addWhenEmpty(Node<T> *node) {
@@ -35,8 +37,9 @@ void ArrayList<T>::addWhenEmpty(Node<T> *node) {
 }
 
 /**
- * @brief Añade un nodo al principio de la lista.
- * @param data valor a ser insertado en un nodo .
+ * @brief Inserta un nuevo elemento al inicio de la lista.
+ * Crea un nuevo nodo y reestructura los punteros para desplazar la antigua cabeza.
+ * @param data Valor de tipo T a almacenar en el nuevo nodo.
  */
 template<typename T>
 void ArrayList<T>::addFirst(T data) {
@@ -56,8 +59,9 @@ void ArrayList<T>::addFirst(T data) {
 }
 
 /**
- * @brief Añade un nodo al final de la lista.
- * @param data valor a ser insertado en un nodo .
+ * @brief Inserta un nuevo elemento al final de la lista.
+ * Extiende la lista desde el nodo 'tail' actual y actualiza la referencia de la cola.
+ * @param data Valor de tipo T a almacenar en el nuevo nodo.
  */
 template<typename T>
 void ArrayList<T>::addLast(T data) {
@@ -76,9 +80,9 @@ void ArrayList<T>::addLast(T data) {
 }
 
 /**
- * @brief Obtiene el nodo en una posición específica.
- * @param index Índice del nodo (basado en 1).
- * @return Puntero al nodo encontrado o nullptr si el índice es inválido.
+ * @brief Localiza un nodo basado en su posición secuencial.
+ * @param index Índice entero del nodo (rango válido: 1 a n).
+ * @return Puntero al Node<T> encontrado; nullptr si el índice está fuera de rango.
  */
 template<typename T>
 Node<T>* ArrayList<T>::get(int index) {
@@ -92,8 +96,8 @@ Node<T>* ArrayList<T>::get(int index) {
 }
 
 /**
- * @brief Obtiene el nodo apuntado por el cursor actual.
- * @return Puntero al nodo actual (current).
+ * @brief Accede al nodo apuntado por el cursor de navegación.
+ * @return Puntero al nodo 'current' actual. Puede ser nullptr si la lista está vacía.
  */
 template<typename T>
 Node<T> *ArrayList<T>::get() {
@@ -101,23 +105,33 @@ Node<T> *ArrayList<T>::get() {
 }
 
 /**
- * @brief Desplaza el cursor 'current' al siguiente nodo de la lista.
+ * @brief Avanza el cursor de navegación al siguiente nodo.
+ * @return true si el desplazamiento fue exitoso; false si el cursor es nulo o ya se encuentra en la cola.
  */
 template<typename T>
-void ArrayList<T>::currentNext() {
-    if (this->current != nullptr && this->current->getNextNode() != nullptr) this->current = this->current->getNextNode();
+bool ArrayList<T>::currentNext() {
+    if (this->current != nullptr && this->current->getNextNode() != nullptr) {
+        this->current = this->current->getNextNode();
+        return true;
+    }
+    return false;
 }
 
 /**
- * @brief Desplaza el cursor 'current' al nodo anterior de la lista.
+ * @brief Retrocede el cursor de navegación al nodo anterior.
+ * @return true si el desplazamiento fue exitoso; false si el cursor es nulo o ya se encuentra en la cabeza.
  */
 template<typename T>
-void ArrayList<T>::currentPrevious() {
-    if (this->current != nullptr && this->current->getPreviousNode() != nullptr) this->current = this->current->getPreviousNode();
+bool ArrayList<T>::currentPrevious() {
+    if (this->current != nullptr && this->current->getPreviousNode() != nullptr) {
+        this->current = this->current->getPreviousNode();
+        return true;
+    }
+    return false;
 }
 
 /**
- * @brief Reinicia el cursor 'current' a la cabeza de la lista.
+ * @brief Reposiciona el cursor de navegación al inicio de la lista.
  */
 template<typename T>
 void ArrayList<T>::currentReset() {
@@ -125,8 +139,8 @@ void ArrayList<T>::currentReset() {
 }
 
 /**
- * @brief Permite observar el nodo siguiente al cursor actual sin desplazarlo.
- * @return Puntero al siguiente nodo, o nullptr si el cursor es nulo o está en el final.
+ * @brief Consulta el nodo posterior al cursor sin modificar la posición de este.
+ * @return Puntero al nodo siguiente; nullptr si no existe un nodo posterior.
  */
 template<typename T>
 Node<T>* ArrayList<T>::currentPeek() {
@@ -135,8 +149,8 @@ Node<T>* ArrayList<T>::currentPeek() {
 }
 
 /**
- * @brief Obtiene el primer nodo de la lista.
- * @return Puntero al nodo head.
+ * @brief Recupera la referencia al primer elemento.
+ * @return Puntero al nodo cabeza (head).
  */
 template<typename T>
 Node<T> *ArrayList<T>::getFirst() {
@@ -144,8 +158,8 @@ Node<T> *ArrayList<T>::getFirst() {
 }
 
 /**
- * @brief Obtiene el último nodo de la lista.
- * @return Puntero al nodo tail.
+ * @brief Recupera la referencia al último elemento.
+ * @return Puntero al nodo cola (tail).
  */
 template<typename T>
 Node<T> *ArrayList<T>::getLast() {
@@ -153,7 +167,8 @@ Node<T> *ArrayList<T>::getLast() {
 }
 
 /**
- * @brief Limpia las referencias de la lista cuando queda vacía.
+ * @brief Reinicia las propiedades de control de la lista.
+ * Método interno invocado cuando la eliminación de un nodo deja la lista sin elementos.
  */
 template<typename T>
 void ArrayList<T>::removeWhenEmpty() {
@@ -198,8 +213,8 @@ void ArrayList<T>::unshift() {
 }
 
 /**
- * @brief Lógica interna para desconectar un nodo que no es ni cabeza ni cola.
- * @param node Puntero al nodo que se desea remover.
+ * @brief Desvincula un nodo intermedio mediante la reestructuración de enlaces adyacentes.
+ * @param node Puntero al nodo que se desea extraer. Debe ser un nodo intermedio (no head ni tail).
  */
 template<typename T>
 void ArrayList<T>::removeMiddle(Node<T> *node) {
@@ -230,8 +245,8 @@ Node<T>* ArrayList<T>::remove(int index) {
 }
 
 /**
- * @brief Elimina y retorna el primer nodo.
- * @return Puntero al nodo eliminado.
+ * @brief Desvincula y retorna el primer elemento de la lista.
+ * @return Puntero al nodo que ocupaba la posición 1.
  */
 template<typename T>
 Node<T> *ArrayList<T>::removeFirst() {
@@ -239,8 +254,8 @@ Node<T> *ArrayList<T>::removeFirst() {
 }
 
 /**
- * @brief Elimina y retorna el último nodo.
- * @return Puntero al nodo eliminado.
+ * @brief Desvincula y retorna el último elemento de la lista.
+ * @return Puntero al nodo que ocupaba la posición n.
  */
 template<typename T>
 Node<T> *ArrayList<T>::removeLast() {
@@ -248,7 +263,7 @@ Node<T> *ArrayList<T>::removeLast() {
 }
 
 /**
- * @brief Imprime los datos de todos los nodos en la consola.
+ * @brief Serializa y muestra el contenido de la lista en la salida estándar.
  */
 template<typename T>
 void ArrayList<T>::printList() {
@@ -261,8 +276,8 @@ void ArrayList<T>::printList() {
 }
 
 /**
- * @brief Obtiene el tamaño actual de la lista.
- * @return Cantidad de elementos.
+ * @brief Consulta la dimensión actual de la lista.
+ * @return Entero con el número total de nodos.
  */
 template<typename T>
 int ArrayList<T>::getSize() const {
@@ -270,9 +285,9 @@ int ArrayList<T>::getSize() const {
 }
 
 /**
- * @brief Busca si un dato existe en la lista.
- * @param data Valor a buscar.
- * @return true si el dato se encuentra en la lista, false en caso contrario.
+ * @brief Realiza una búsqueda lineal para determinar la existencia de un valor.
+ * @param data Valor de tipo T a comparar con el contenido de cada nodo.
+ * @return true si existe al menos una coincidencia; false si se recorre toda la lista sin éxito.
  */
 template<typename T>
 bool ArrayList<T>::has(T data) {
@@ -286,7 +301,8 @@ bool ArrayList<T>::has(T data) {
 
 /**
  * @brief Destructor de la clase ArrayList.
- * Se encarga de liberar la memoria de todos los nodos de la lista.
+ * Recorre la estructura de forma iterativa eliminando cada nodo para asegurar
+ * una liberación completa de la memoria dinámica (Heap).
  */
 template<typename T>
 ArrayList<T>::~ArrayList() {
