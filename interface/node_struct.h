@@ -2,7 +2,7 @@
 #define NODE_STRUCT_H
 #include <string>
 
-#include "../../interface/type_token.h"
+#include "../interface/type_token.h"
 
 struct NodeStruct {
     std::string value;

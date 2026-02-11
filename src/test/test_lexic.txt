@@ -1,0 +1,33 @@
+int main() {
+    int a = 10;
+    float b = 5.5;
+    double c = 20.0;
+    string mensaje = "Hola";
+
+    a = (a + 5) * 2 / 1;
+    b = a ** 2; 
+    a++;
+    b--;
+    int residuo = a % 3;
+
+    if (a >= 10 && b <= 20.0) {
+        a = a + 1;
+    } else if (a == 0 || b > 100) {
+        return 0;
+    }
+
+    while (a < 50) {
+        a = a + 1;
+        if (a != 10) {
+            break; 
+        }
+    }
+
+    int lista[5] = {1, 2, 3, 4, 5};
+
+    for (int i = 0; i < 5; i++) {
+        c = c + lista[i];
+    }
+
+    return 0;
+}

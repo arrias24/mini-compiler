@@ -5,19 +5,17 @@
 #include <string>
 #include <sstream>
 #include <unordered_map>
+#include "../../interface/type_token.h"
 
 class TokenProvider {
     private:
-        std::unordered_map<std::string, std::string> tokenMap;
-        TokenProvider();
-
+        std::unordered_map<std::string, TypeToken> tokenMap;
     public:
-        TokenProvider(const TokenProvider&) = delete;
-        void operator=(const TokenProvider&) = delete;
-        static TokenProvider& getInstance();
-
+        TokenProvider();
+        std::string toString(TypeToken type);
+        TypeToken toTypeToken(const std::string& str);
         bool loadConfig(const std::string& filename);
-        std::string getToken(const std::string& key);
+        TypeToken getToken(const std::string& key);
         bool isToken(const std::string& key) const;
     };
 

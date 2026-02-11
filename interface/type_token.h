@@ -2,11 +2,12 @@
 #define TYPE_TOKEN_H
 
 enum class TypeToken {
-    KEY_WORD,
+    KEYWORD,
     IDENTIFIER,
     OPERATOR,
     VALUE,
-    DELIMITER
+    DELIMITER,
+    UNKNOWN
 };
 
 #endif

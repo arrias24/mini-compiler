@@ -1,0 +1,111 @@
+int x = 5; floaty=8;           la guarda en un nodo del array de lineas.
+
+
+int
+x
+=
+5
+;
+float 
+y=8
+
+
+Struct DataWord {
+    string value;
+    string typename;
+    int codeLine;  
+}
+
+
+
+list((int),(x),(=),(5),(;), (float), (y=8));
+
+
+
+while(list.next != NULL){
+   
+
+    string word = list.current;
+
+    chart letters = word.split(); ['i', 'n', 't',]
+
+    string data = '';
+
+    for (int i = 0; i < letters.length; i++){
+
+        switch (letter[i]){
+
+            case '='{
+
+            }
+
+            case '+' {
+
+            }
+
+            default {
+                data.concatenar(letter[i]) int
+            }
+        }
+
+    }
+
+    
+
+    if (comprobarPalabraReservada(word)'){
+
+        DataWord data;
+
+        data.value = word;
+        data.typename = reserve;
+        data.codeLine = ???
+
+ 
+        ListaMadre.add(data);
+    }
+    else{
+        DataWord data;
+
+        data.value = word;
+        data.typename = operador;
+        data.codeLine = ???
+
+ 
+        ListaMadre.add(data);  
+    }
+
+}
+
+
+
+
+
+palabras reservadas = ['int', 'float', 'chart']; -- ArrayList
+
+comprobarPalabraReservada(word){
+
+    while(reservadas.next != null){
+
+        if (word == reservadas.current){
+                return true;
+        }
+        reservadas.currentNext();
+    }
+    return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

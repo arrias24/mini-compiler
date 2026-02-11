@@ -1,0 +1,38 @@
+#include <iostream>
+#include <iomanip> 
+#include "../include/lexical_analyzer/lexical_analyzer.cpp"
+#include "../interface/node_struct.h"
+
+int main(){
+        std::ifstream code("../src/test/test_lexic.txt");
+        LexicalAnalyzer analyzer;
+        ArrayList<NodeStruct> tokens = analyzer.tokenize(code);
+    
+        // Imprimir los tokens obtenidos
+
+        std::cout << tokens.getSize() << " tokens encontrados:" << std::endl;
+
+        std::cout << std::left << std::setw(8)  << "ID" 
+                << std::setw(20) << "LEXEMA" 
+                << std::setw(15) << "TOKEN TYPE" << std::endl;
+                
+        std::cout << std::string(45, '-') << std::endl; // Línea divisoria
+
+        for (int i = 0; i < tokens.getSize(); i++) {
+            auto nodePtr = tokens.get(i);
+            if (nodePtr != nullptr) {
+                NodeStruct t = nodePtr->getData();
+                
+                // Formateo de filas
+                std::cout << std::left 
+                        << "[" << std::setw(5) << i << "] "           // ID entre corchetes
+                        << std::setw(20) << t.value                   // El lexema (ej: "if", "++")
+                        << std::setw(15) << analyzer.tokenProvider.toString(t.type) 
+                        << std::endl;
+            }
+        }
+        std::cout << std::string(45, '-') << std::endl;
+
+
+    return 0;
+}
