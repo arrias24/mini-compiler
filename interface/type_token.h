@@ -7,6 +7,7 @@ enum class TypeToken {
     OPERATOR,
     VALUE,
     DELIMITER,
+    SPECIAL_DELIMITER,
     UNKNOWN
 };
 

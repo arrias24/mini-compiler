@@ -2,7 +2,7 @@ int main() {
     int a = 10;
     float b = 5.5;
     double c = 20.0;
-    string mensaje = "Hola";
+    string mensaje = "Cadena de texto";
 
     a = (a + 5) * 2 / 1;
     b = a ** 2; 

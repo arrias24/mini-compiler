@@ -1,38 +1,62 @@
 #include <iostream>
-#include <iomanip> 
-#include "../include/lexical_analyzer/lexical_analyzer.cpp"
-#include "../interface/node_struct.h"
+#include <iomanip>
+#include <fstream>
+#include <string>
+#include "../include/lexical_analyzer/lexical_analyzer.h"
 
-int main(){
-        std::ifstream code("../src/test/test_lexic.txt");
-        LexicalAnalyzer analyzer;
-        ArrayList<NodeStruct> tokens = analyzer.tokenize(code);
-    
-        // Imprimir los tokens obtenidos
+int main() {
+    std::ifstream file_config("../config/lexical_config.csv");
+    std::ifstream code("../src/test/test_lexic.txt");
 
-        std::cout << tokens.getSize() << " tokens encontrados:" << std::endl;
+    if (!file_config.is_open() || !code.is_open()) {
+        std::cerr << "Error: No se pudieron abrir los archivos. Verifica las rutas." << std::endl;
+        return 1;
+    }
 
-        std::cout << std::left << std::setw(8)  << "ID" 
-                << std::setw(20) << "LEXEMA" 
-                << std::setw(15) << "TOKEN TYPE" << std::endl;
-                
-        std::cout << std::string(45, '-') << std::endl; // Línea divisoria
+    LexicalAnalyzer analyzer(file_config);
+    ArrayList<NodeStruct> tokens = analyzer.tokenize(code);
 
-        for (int i = 0; i < tokens.getSize(); i++) {
-            auto nodePtr = tokens.get(i);
-            if (nodePtr != nullptr) {
-                NodeStruct t = nodePtr->getData();
-                
-                // Formateo de filas
-                std::cout << std::left 
-                        << "[" << std::setw(5) << i << "] "           // ID entre corchetes
-                        << std::setw(20) << t.value                   // El lexema (ej: "if", "++")
-                        << std::setw(15) << analyzer.tokenProvider.toString(t.type) 
-                        << std::endl;
-            }
+    // Definición de anchos de columna para fácil ajuste
+    const int wPos = 10;
+    const int wLex = 25;
+    const int wTipo = 20;
+    const int wLin = 10;
+    const int wPal = 10;
+    const int totalWidth = wPos + wLex + wTipo + wLin + wPal;
+
+    std::cout << "\n" << std::string(totalWidth, '=') << std::endl;
+    std::cout << "  RESULTADOS DEL ANALIZADOR LÉXICO (" << tokens.getSize() << " TOKENS)" << std::endl;
+    std::cout << std::string(totalWidth, '=') << "\n" << std::endl;
+
+    // Encabezado centrado con std::left para consistencia
+    std::cout << std::left
+              << std::setw(wPos)  << " POS"
+              << std::setw(wLex)  << "LEXEMA"
+              << std::setw(wTipo) << "TIPO"
+              << std::setw(wLin)  << "LINEA"
+              << std::setw(wPal)  << "PALABRA" << std::endl;
+
+    std::cout << std::string(totalWidth, '-') << std::endl;
+
+    // Recorrido de los tokens
+    for (int i = 0; i < tokens.getSize(); i++) {
+        auto nodePtr = tokens.get(i);
+        if (nodePtr != nullptr) {
+            NodeStruct t = nodePtr->getData();
+
+            // Usamos formato [ i ] para la posición y alineamos el resto
+            std::string posStr = "[" + std::to_string(i) + "]";
+
+            std::cout << std::left
+                      << std::setw(wPos)  << posStr
+                      << std::setw(wLex)  << (t.value.length() > wLex-3 ? t.value.substr(0, wLex-5) + "..." : t.value)
+                      << std::setw(wTipo) << TokenProvider::toString(t.type)
+                      << std::setw(wLin)  << t.line
+                      << std::setw(wPal)  << t.word
+                      << std::endl;
         }
-        std::cout << std::string(45, '-') << std::endl;
-
+    }
+    std::cout << std::string(totalWidth, '-') << std::endl;
 
     return 0;
 }
