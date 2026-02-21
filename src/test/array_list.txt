@@ -1,0 +1,74 @@
+#include <iostream>
+#include "../include/array_list/array_list.cpp"
+
+int main() {;
+    ArrayList<int> lista;
+
+    std::cout << "--- 1. Pruebas de Insercion ---" << std::endl;
+    lista.addLast(10); // Al final: [10]
+    lista.addLast(20); // Al final: [10, 20]
+    lista.addFirst(5);   // Al inicio: [5, 10, 20]
+    lista.addLast(30); // Al final: [5, 10, 20, 30]
+
+    std::cout << "Lista actual: ";
+    lista.printList();
+    std::cout << "Tamaño: " << lista.getSize() << std::endl;
+
+    std::cout << "\n--- 2. Pruebas de Navegación (Current) ---" << std::endl;
+    lista.currentReset(); // current -> 5
+    std::cout << "Nodo inicial (reset): " << lista.get()->getData() << std::endl;
+
+    lista.currentNext(); // current -> 10
+    std::cout << "Siguiente nodo: " << lista.get()->getData() << std::endl;
+
+    lista.currentNext(); // current -> 20
+    std::cout << "Siguiente nodo: " << lista.get()->getData() << std::endl;
+
+    lista.currentPrevious(); // current -> 10
+    std::cout << "Nodo anterior: " << lista.get()->getData() << std::endl;
+
+    std::cout << "\n--- 3. Pruebas de Busqueda y Acceso ---" << std::endl;
+    std::cout << "Tiene el 20?: " << (lista.has(20) ? "Si" : "No") << std::endl;
+    std::cout << "Tiene el 100?: " << (lista.has(100) ? "Si" : "No") << std::endl;
+    std::cout << "Nodo en indice 3: " << lista.get(3)->getData() << std::endl;
+    std::cout << "Primer nodo: " << lista.getFirst()->getData() << std::endl;
+    std::cout << "Ultimo nodo: " << lista.getLast()->getData() << std::endl;
+
+    std::cout<<"Current es: "<<lista.get()->getData()<<std::endl;
+    if (lista.currentPeek() != nullptr) {
+        std::cout << "El siguiente a Current es: " << lista.currentPeek()->getData() << std::endl;
+    } else {
+        std::cout << "No hay un siguiente nodo para espiar." << std::endl;
+    }
+    std::cout << "\n--- 4. Pruebas de Eliminacion ---" << std::endl;
+
+    // Eliminar el primero
+    Node<int>* primero = lista.removeFirst();
+    if (primero) {
+        std::cout << "Tras removeFirst (quito 5): ";
+        delete primero; // Liberamos memoria
+        lista.printList();
+    }
+
+    // Eliminar el ultimo
+    Node<int>* ultimo = lista.removeLast();
+    if (ultimo) {
+        std::cout << "Tras removerLast (quito 30): ";
+        delete ultimo; // Liberamos memoria
+        lista.printList();
+    }
+
+    // Eliminar por indice
+    Node<int>* eliminado = lista.remove(1); // Quita el 10
+    if (eliminado) {
+        std::cout << "Eliminado indice 1: " << eliminado->getData() << std::endl;
+        delete eliminado; // Liberamos memoria
+    }
+
+    std::cout << "Lista final: ";
+    lista.printList();
+
+    std::cout << "\n--- 5. Limpieza final ---" << std::endl;
+    // El destructor se encarga del resto al salir del scope
+    return 0;
+}

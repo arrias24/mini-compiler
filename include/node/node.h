@@ -21,7 +21,6 @@ class Node {
         void setPreviousNode(Node<T>* previousNode);
         void print(bool isPrimitive);
 };
-#endif
 
 /**
  * @file node.cpp
@@ -177,3 +176,4 @@ void Node<T>::print(bool isPrimitive) {
         printStruct();
     }
 }
+#endif

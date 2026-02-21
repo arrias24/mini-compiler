@@ -20,4 +20,5 @@ add_executable(proyectos
         include/stack/stack.h
         interface/type_token.h
         interface/node_struct.h
+        include/operations_analyzer/operations_analyzer.h
 )

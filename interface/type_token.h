@@ -1,13 +1,16 @@
 #ifndef TYPE_TOKEN_H
 #define TYPE_TOKEN_H
 
-enum class TypeToken {
+enum class TokenType {
     KEYWORD,
     IDENTIFIER,
     OPERATOR,
+    ASSIGNMENT,
     VALUE,
+    OPEN_DELIMITER,
+    CLOSE_DELIMITER,
     DELIMITER,
-    SPECIAL_DELIMITER,
+    TEXT_DELIMITER,
     UNKNOWN
 };
 

@@ -38,7 +38,6 @@ class ArrayList {
         bool isEmpty();
         ~ArrayList();
 };
-#endif
 
 /**
  * @brief Constructor por defecto de la clase ArrayList.
@@ -356,3 +355,4 @@ ArrayList<T>::~ArrayList() {
     this->current = nullptr;
     this->size = 0;
 }
+#endif

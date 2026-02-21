@@ -9,18 +9,19 @@
 
 class TokenProvider {
     private:
-        std::unordered_map<std::string, TypeToken> tokenMap;
+        std::unordered_map<std::string, TokenType> tokenMap;
     public:
         TokenProvider();
 
-        static std::string toString(TypeToken type);
-        static TypeToken toTypeToken(const std::string& str);
+        static std::string toString(TokenType type);
+        static TokenType toTypeToken(const std::string& str);
         bool loadConfig(std::ifstream& file_config);
-        TypeToken getToken(const std::string& key) const;
-        bool isToken(const std::string& key) const;
-    };
+        TokenType getToken(const std::string& key) const;
 
-#endif
+        bool isToken(const std::string &key) const;
+
+        bool hasToken(const std::string& key) const;
+    };
 
 inline TokenProvider::TokenProvider() = default;
 
@@ -29,14 +30,17 @@ inline TokenProvider::TokenProvider() = default;
  * * @param type El tipo de token de enumeración (TypeToken).
  * @return std::string El nombre del tipo en mayúsculas (ej: "IDENTIFIER") o "UNKNOWN" si no coincide.
  */
-inline std::string TokenProvider::toString(const TypeToken type) {
+inline std::string TokenProvider::toString(const TokenType type) {
     switch (type) {
-        case TypeToken::IDENTIFIER: return "IDENTIFIER";
-        case TypeToken::VALUE:      return "VALUE";
-        case TypeToken::OPERATOR:   return "OPERATOR";
-        case TypeToken::KEYWORD:    return "KEYWORD";
-        case TypeToken::DELIMITER:  return "DELIMITER";
-        case TypeToken::SPECIAL_DELIMITER: return "SPECIAL_DELIMITER";
+        case TokenType::IDENTIFIER: return "IDENTIFIER";
+        case TokenType::VALUE:      return "VALUE";
+        case TokenType::OPERATOR:   return "OPERATOR";
+        case TokenType::ASSIGNMENT: return "ASSIGNMENT";
+        case TokenType::KEYWORD:    return "KEYWORD";
+        case TokenType::OPEN_DELIMITER:  return "OPEN-DELIMITER";
+        case TokenType::CLOSE_DELIMITER: return "CLOSE-DELIMITER";
+        case TokenType::DELIMITER:  return "DELIMITER";
+        case TokenType::TEXT_DELIMITER: return "TEXT-DELIMITER";
         default: return "UNKNOWN";
     }
 }
@@ -46,14 +50,17 @@ inline std::string TokenProvider::toString(const TypeToken type) {
  * * @param str Cadena de texto que representa el tipo (ej: "KEYWORD").
  * @return TypeToken El valor de la enumeración correspondiente o TypeToken::UNKNOWN si no hay coincidencia.
  */
-inline TypeToken TokenProvider::toTypeToken(const std::string& str) {
-    if (str == "KEYWORD")           return TypeToken::KEYWORD;
-    if (str == "OPERATOR")          return TypeToken::OPERATOR;
-    if (str == "DELIMITER")         return TypeToken::DELIMITER;
-    if (str == "SPECIAL-DELIMITER") return TypeToken::SPECIAL_DELIMITER;
-    if (str == "VALUE")             return TypeToken::VALUE;
-    if (str == "IDENTIFIER")        return TypeToken::IDENTIFIER;
-    return TypeToken::UNKNOWN;
+inline TokenType TokenProvider::toTypeToken(const std::string& str) {
+    if (str == "KEYWORD")           return TokenType::KEYWORD;
+    if (str == "OPERATOR")          return TokenType::OPERATOR;
+    if (str == "ASSIGNMENT")        return TokenType::ASSIGNMENT;
+    if (str == "OPEN-DELIMITER")    return TokenType::OPEN_DELIMITER;
+    if (str == "CLOSE-DELIMITER")   return TokenType::CLOSE_DELIMITER;
+    if (str == "DELIMITER")         return TokenType::DELIMITER;
+    if (str == "TEXT-DELIMITER")    return TokenType::TEXT_DELIMITER;
+    if (str == "VALUE")             return TokenType::VALUE;
+    if (str == "IDENTIFIER")        return TokenType::IDENTIFIER;
+    return TokenType::UNKNOWN;
 }
 
 /**
@@ -100,9 +107,9 @@ inline bool TokenProvider::loadConfig(std::ifstream& file_config) {
  * * @param key El lexema a buscar (ej: "if", "+", "==").
  * @return TypeToken La categoría del token o TypeToken::UNKNOWN si no está registrado.
  */
-inline TypeToken TokenProvider::getToken(const std::string &key) const {
+inline TokenType TokenProvider::getToken(const std::string &key) const {
     if (this->tokenMap.count(key)) return this->tokenMap.at(key);
-    return TypeToken::UNKNOWN;
+    return TokenType::UNKNOWN;
 }
 
 /**
@@ -114,3 +121,4 @@ inline TypeToken TokenProvider::getToken(const std::string &key) const {
 inline bool TokenProvider::isToken(const std::string &key) const {
     return tokenMap.count(key) > 0;
 }
+#endif

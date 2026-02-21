@@ -29,5 +29,9 @@ int main() {
         c = c + lista[i];
     }
 
+    int a =
+    1 + 2
+    + 2;
+
     return 0;
 }

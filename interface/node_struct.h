@@ -5,8 +5,9 @@
 #include "../interface/type_token.h"
 
 struct NodeStruct {
+    std::string name;
+    TokenType type;
     std::string value;
-    TypeToken type;
     int line;
     int word;
 };

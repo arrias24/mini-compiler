@@ -17,9 +17,6 @@ class Stack {
         bool isEmpty();
         ~Stack();
 };
-#endif
-
-#include "./stack.h"
 
 /**
  * @brief Constructor por defecto.
@@ -140,3 +137,4 @@ Stack<T>::~Stack() {
     }
     this->size = 0;
 };
+#endif

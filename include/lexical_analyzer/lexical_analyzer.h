@@ -14,10 +14,10 @@ class LexicalAnalyzer {
     private:
         ArrayList<std::string> arrayLines;
         ArrayList<NodeStruct> dictionary;
-        TypeToken wordAnalyzer(const std::string& word) const;
-        TypeToken letterAnalyzer(const std::string& letter) const;
+        TokenType wordAnalyzer(const std::string& word) const;
+        TokenType letterAnalyzer(const std::string& letter) const;
         void splitLine(std::ifstream &code);
-        void addToken(const std::string& value, TypeToken type, int line, int word);
+        void addToken(const std::string& name, TokenType type, double value, int line, int word);
         bool isOperator(char character) const;
 
     public:
@@ -25,8 +25,6 @@ class LexicalAnalyzer {
         TokenProvider tokenProvider;
         ArrayList<NodeStruct> tokenize(std::ifstream &code);
 };
-
-#endif
 
 /**
  * @brief Constructor de la clase LexicalAnalyzer.
@@ -64,22 +62,22 @@ inline void LexicalAnalyzer::splitLine(std::ifstream &code) {
  * * @param word Cadena de texto extraída del buffer.
  * @return TypeToken Categoría del token identificada; @c TypeToken::UNKNOWN si no hay coincidencia.
  */
-inline TypeToken LexicalAnalyzer::wordAnalyzer(const std::string& word) const {
-    if (word.empty()) return TypeToken::UNKNOWN;
+inline TokenType LexicalAnalyzer::wordAnalyzer(const std::string& word) const {
+    if (word.empty()) return TokenType::UNKNOWN;
 
     if (this->tokenProvider.isToken(word)) {
         return this->tokenProvider.getToken(word);
     }
 
     if (isdigit(word[0])) {
-        return TypeToken::VALUE;
+        return TokenType::VALUE;
     }
 
     if (isalpha(word[0]) || word[0] == '_') {
-        return TypeToken::IDENTIFIER;
+        return TokenType::IDENTIFIER;
     }
 
-    return TypeToken::UNKNOWN;
+    return TokenType::UNKNOWN;
 }
 
 /**
@@ -88,11 +86,11 @@ inline TypeToken LexicalAnalyzer::wordAnalyzer(const std::string& word) const {
  * * @param letter Cadena que representa el símbolo o carácter a analizar.
  * @return TypeToken Tipo de token correspondiente o @c TypeToken::UNKNOWN.
  */
-inline TypeToken LexicalAnalyzer::letterAnalyzer(const std::string& letter) const {
+inline TokenType LexicalAnalyzer::letterAnalyzer(const std::string& letter) const {
     if (this->tokenProvider.isToken(letter)) {
         return this->tokenProvider.getToken(letter);
     }
-    return TypeToken::UNKNOWN;
+    return TokenType::UNKNOWN;
 }
 
 /**
@@ -120,8 +118,9 @@ inline bool LexicalAnalyzer::isOperator(const char character) const {
  * @param line Número de línea en el código fuente (basado en 1).
  * @param word Índice secuencial del token dentro de su línea.
  */
-inline void LexicalAnalyzer::addToken(const std::string& value, TypeToken type, int line, int word) {
+inline void LexicalAnalyzer::addToken(const std::string& name, TokenType type, double value, int line, int word) {
     NodeStruct node;
+    node.name = name;
     node.type = type;
     node.value = value;
     node.line = line;
@@ -132,7 +131,7 @@ inline void LexicalAnalyzer::addToken(const std::string& value, TypeToken type, 
 /**
  * @brief Ejecuta el análisis léxico completo sobre el código fuente.
  * * Implementa una máquina de estados finitos simple que maneja:
- * - Cadenas literales entre comillas (@c SPECIAL_DELIMITER).
+ * - Cadenas literales entre comillas (@c TEXT_DELIMITER).
  * - Identificación de números flotantes (preservando el punto).
  * - Operadores compuestos de dos caracteres (ej. `==`, `!=`).
  * - Omisión de espacios en blanco.
@@ -142,11 +141,11 @@ inline void LexicalAnalyzer::addToken(const std::string& value, TypeToken type, 
 inline ArrayList<NodeStruct> LexicalAnalyzer::tokenize(std::ifstream &code) {
     this->splitLine(code);
     int numLines = 0;
-    int numWords = 0;
 
     do {
         std::string buffer;
         std::string line = this->arrayLines.get()->getData();
+        int numWords = 1;
         numLines++;
         bool inString = false;
         char quoteChar = '\0';
@@ -158,7 +157,7 @@ inline ArrayList<NodeStruct> LexicalAnalyzer::tokenize(std::ifstream &code) {
 
             if (inString) {
                 if (c == quoteChar) {
-                    this->addToken(buffer, TypeToken::VALUE, numLines, numWords++);
+                    this->addToken(buffer, TokenType::VALUE, '\0', numLines, numWords++);
                     buffer.clear();
                     inString = false;
                 } else buffer += c;
@@ -166,9 +165,9 @@ inline ArrayList<NodeStruct> LexicalAnalyzer::tokenize(std::ifstream &code) {
             }
 
             std::string singleChar(1, c);
-            if (this->tokenProvider.getToken(singleChar) == TypeToken::SPECIAL_DELIMITER) {
+            if (this->tokenProvider.getToken(singleChar) == TokenType::TEXT_DELIMITER) {
                 if (!buffer.empty()) {
-                    this->addToken(buffer, this->wordAnalyzer(buffer), numLines, numWords++);
+                    this->addToken(buffer, this->wordAnalyzer(buffer), '\0', numLines, numWords++);
                     buffer.clear();
                 }
                 inString = true;
@@ -176,19 +175,21 @@ inline ArrayList<NodeStruct> LexicalAnalyzer::tokenize(std::ifstream &code) {
                 continue;
             }
 
-            //FLUJO PARA OPERADOR INDIVIDUAL Y DOBLE
+            //FLUJO PARA ESPACIOS
 
             if (isspace(c)) {
                 if (!buffer.empty()) {
-                    this->addToken(buffer, this->wordAnalyzer(buffer), numLines, numWords++);
+                    this->addToken(buffer, this->wordAnalyzer(buffer), '\0',numLines, numWords++);
                     buffer.clear();
                 }
                 continue;
             }
 
+            //FLUJO PARA OPERADOR INDIVIDUAL Y DOBLE
+
             if (isOperator(c)) {
                 if (!buffer.empty()) {
-                    this->addToken(buffer, this->wordAnalyzer(buffer), numLines, numWords++);
+                    this->addToken(buffer, this->wordAnalyzer(buffer), '\0',numLines, numWords++);
                     buffer.clear();
                 }
 
@@ -200,7 +201,7 @@ inline ArrayList<NodeStruct> LexicalAnalyzer::tokenize(std::ifstream &code) {
                         i++;
                     }
                 }
-                this->addToken(op, this->letterAnalyzer(op), numLines, numWords++);
+                this->addToken(op, this->letterAnalyzer(op), '\0',numLines, numWords++);
             } else {
                 buffer += c;
             }
@@ -209,11 +210,13 @@ inline ArrayList<NodeStruct> LexicalAnalyzer::tokenize(std::ifstream &code) {
         //LIMPIAR BUFFER
 
         if (!buffer.empty()) {
-            this->addToken(buffer, this->wordAnalyzer(buffer), numLines, numWords++);
+            this->addToken(buffer, this->wordAnalyzer(buffer), '\0',numLines, numWords++);
             buffer.clear();
         }
 
     } while (this->arrayLines.currentNext());
 
+    this->dictionary.currentReset();
     return this->dictionary;
 }
+#endif
